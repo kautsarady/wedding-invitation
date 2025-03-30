@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Gallery from "./gallery";
 
 type Language = "id" | "jp" | "en";
@@ -225,6 +225,65 @@ export default function WeddingInvitation({
 
   const t = TRANSLATIONS[language];
 
+  const isAkad = useMemo(() => {
+    if (typeof window === "undefined") {
+      return false; // or any default value for server-side rendering
+    }
+    return window.location.hostname.includes("akad");
+  }, []);
+
+  const getGroomBride = () => {
+    const elems = [
+      <div key="groom" className="text-center">
+        <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 border-[3px] border-[#0B2463]/20 p-1 bg-white shadow-md">
+          <Image
+            src={IMAGES.groomTrad1 || "/placeholder.svg"}
+            alt="Groom"
+            width={128}
+            height={128}
+            className="object-cover w-full h-full rounded-full"
+          />
+        </div>
+        <h3 className="text-xl text-[#0B2463] font-bold">
+          Muhammad Kautsar Apriadi, S.ST
+        </h3>
+        <div className="elegant-divider my-3 max-w-[150px] mx-auto"></div>
+        <p className="text-[#0B2463] mt-2">{t.sonOf}</p>
+        <p className="text-[#0B2463] font-bold">
+          Ir. H. Ismail Mustari, S.T., M.T
+        </p>
+        <p className="text-[#0B2463] font-bold">drg. Hj. Nurmiati Nara</p>
+      </div>,
+
+      <div key="bride" className="text-center">
+        <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 border-[3px] border-[#e89ecb]/20 p-1 bg-white shadow-md">
+          <Image
+            src={IMAGES.brideTrad1 || "/placeholder.svg"}
+            alt="Bride"
+            width={128}
+            height={128}
+            className="object-cover w-full h-full rounded-full"
+          />
+        </div>
+        <h3 className="text-xl text-[#0B2463] font-bold">
+          Alifah Awina K. A.Md.Keb
+        </h3>
+        <div className="elegant-divider my-3 max-w-[150px] mx-auto"></div>
+        <p className="text-[#0B2463] mt-2">{t.daughterOf}</p>
+        <p className="text-[#0B2463] font-bold">
+          Drs. Abdul Kadir, S.Pd., M.Pd.
+        </p>
+        <p className="text-[#0B2463] font-bold">Hariani, S.Pd.I</p>
+      </div>,
+    ];
+
+    if (isAkad) {
+      return elems.reverse();
+    }
+
+    return elems;
+  };
+
   // If the invitation is not yet opened, show the envelope
   if (!isOpen) {
     return (
@@ -309,7 +368,7 @@ export default function WeddingInvitation({
                 </div>
 
                 <h3 className="font-parisienne text-2xl text-[#0B2463] mb-4 font-bold">
-                  Kautsar & Alifah
+                  {isAkad ? "Alifah & Kautsar" : "Kautsar & Alifah"}
                 </h3>
 
                 <div className="mt-6">
@@ -329,15 +388,19 @@ export default function WeddingInvitation({
               {/* Envelope Bottom with both dates */}
               <div className="envelope-bottom bg-gradient-to-r from-[#e89ecb]/80 to-[#e89ecb] py-3 flex flex-col items-center justify-center">
                 <div className="flex items-center gap-4 text-white">
-                  <div className="flex items-center font-bold">
-                    <Calendar className="h-3 w-3 mr-1" />
-                    <p className="text-xs">{t.akadNikah}: 09.04.2025</p>
-                  </div>
-                  <div className="h-4 w-px bg-white/50"></div>
-                  <div className="flex items-center">
-                    <Calendar className="h-3 w-3 mr-1" />
-                    <p className="text-xs font-bold">{t.resepsi}: 12.04.2025</p>
-                  </div>
+                  {isAkad ? (
+                    <div className="flex items-center font-bold">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      <p className="text-xs">{t.akadNikah}: 09.04.2025</p>
+                    </div>
+                  ) : (
+                    <div className="flex items-center">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      <p className="text-xs font-bold">
+                        {t.resepsi}: 12.04.2025
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -507,11 +570,20 @@ export default function WeddingInvitation({
             </div>
 
             <h1 className="font-parisienne text-4xl md:text-6xl lg:text-7xl text-[#0B2463] mb-6 font-extrabold text-shadow">
-              Kautsar <span className="text-[#e89ecb]">&</span> Alifah
+              {isAkad ? (
+                <>
+                  Kautsar <span className="text-[#e89ecb]">&</span> Alifah
+                </>
+              ) : (
+                <>
+                  Alifah <span className="text-[#e89ecb]">&</span> Kautsar
+                </>
+              )}
             </h1>
 
             {/* Event Badges */}
             <div className="flex flex-wrap justify-center gap-3 mt-8">
+              {isAkad ? (
               <Badge
                 variant="outline"
                 className="py-2 px-4 text-base border-[#e89ecb] text-[#e89ecb] cursor-pointer hover:bg-[#e89ecb] hover:text-white transition-colors relative overflow-hidden group"
@@ -526,6 +598,7 @@ export default function WeddingInvitation({
                 </span>
                 <span className="absolute inset-0 bg-gradient-to-r from-[#e89ecb]/0 via-[#e89ecb]/20 to-[#e89ecb]/0 opacity-0 group-hover:opacity-100 animate-shine"></span>
               </Badge>
+              ) : (
               <Badge
                 variant="outline"
                 className="py-2 px-4 text-base border-[#0B2463] text-[#0B2463] cursor-pointer hover:bg-[#0B2463] hover:text-white transition-colors relative overflow-hidden group"
@@ -540,6 +613,7 @@ export default function WeddingInvitation({
                 </span>
                 <span className="absolute inset-0 bg-gradient-to-r from-[#0B2463]/0 via-[#0B2463]/20 to-[#0B2463]/0 opacity-0 group-hover:opacity-100 animate-shine"></span>
               </Badge>
+              )}
             </div>
           </div>
         </section>
@@ -587,49 +661,7 @@ export default function WeddingInvitation({
 
             {/* Couple Information - Combined here, removed duplicate section */}
             <div className="grid md:grid-cols-2 gap-8 mt-8">
-              <div className="text-center">
-                <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 border-[3px] border-[#0B2463]/20 p-1 bg-white shadow-md">
-                  <Image
-                    src={IMAGES.groomTrad1 || "/placeholder.svg"}
-                    alt="Groom"
-                    width={128}
-                    height={128}
-                    className="object-cover w-full h-full rounded-full"
-                  />
-                </div>
-                <h3 className="text-xl text-[#0B2463] font-bold">
-                  Muhammad Kautsar Apriadi, S.ST
-                </h3>
-                <div className="elegant-divider my-3 max-w-[150px] mx-auto"></div>
-                <p className="text-[#0B2463] mt-2">{t.sonOf}</p>
-                <p className="text-[#0B2463] font-bold">
-                  Ir. H. Ismail Mustari, S.T., M.T
-                </p>
-                <p className="text-[#0B2463] font-bold">
-                  drg. Hj. Nurmiati Nara
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 border-[3px] border-[#e89ecb]/20 p-1 bg-white shadow-md">
-                  <Image
-                    src={IMAGES.brideTrad1 || "/placeholder.svg"}
-                    alt="Bride"
-                    width={128}
-                    height={128}
-                    className="object-cover w-full h-full rounded-full"
-                  />
-                </div>
-                <h3 className="text-xl text-[#0B2463] font-bold">
-                  Alifah Awina K. A.Md.Keb
-                </h3>
-                <div className="elegant-divider my-3 max-w-[150px] mx-auto"></div>
-                <p className="text-[#0B2463] mt-2">{t.daughterOf}</p>
-                <p className="text-[#0B2463] font-bold">
-                  Drs. Abdul Kadir, S.Pd., M.Pd.
-                </p>
-                <p className="text-[#0B2463] font-bold">Hariani, S.Pd.I</p>
-              </div>
+              {getGroomBride()}
             </div>
           </div>
         </section>
@@ -640,121 +672,121 @@ export default function WeddingInvitation({
             {t.ourSpecialDay}
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Akad Nikah - Now with pink color */}
-            <div
-              className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm"
-              id="akad-details"
-            >
-              <div className="text-center mb-4">
-                <Badge className="bg-[#e89ecb] hover:bg-[#e89ecb]/90 mb-2">
-                  {t.akadNikah}
-                </Badge>
-                <h3 className="text-xl font-bold text-[#0B2463]">Barru</h3>
+          <div className="grid gap-8">
+            {isAkad ? (
+              <div
+                className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm"
+                id="akad-details"
+              >
+                <div className="text-center mb-4">
+                  <Badge className="bg-[#e89ecb] hover:bg-[#e89ecb]/90 mb-2">
+                    {t.akadNikah}
+                  </Badge>
+                  <h3 className="text-xl font-bold text-[#0B2463]">Barru</h3>
+                </div>
+
+                <div className="elegant-divider my-3"></div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="text-[#e89ecb] h-5 w-5 flex-shrink-0" />
+                    <p className="text-[#0B2463] font-medium">9 April 2025</p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Clock className="text-[#e89ecb] h-5 w-5 flex-shrink-0" />
+                    <p className="text-[#0B2463] font-medium">10:00 WITA</p>
+                  </div>
+
+                  <div className="flex items-start gap-2">
+                    <MapPin className="text-[#e89ecb] h-5 w-5 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-[#0B2463] font-medium">
+                        Kediaman Mempelai Wanita
+                      </p>
+                      <p className="text-[#0B2463]/70 text-sm">
+                        Aroppoe, Kab. Barru
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Google Maps iframe */}
+                  <div className="w-full h-[200px] mt-2 border border-[#0B2463]/10 rounded-md overflow-hidden">
+                    <iframe
+                      src="https://www.google.com/maps?q=-4.483733,119.616693&hl=en&z=18&output=embed"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen={false}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    ></iframe>
+                  </div>
+                </div>
               </div>
-
-              <div className="elegant-divider my-3"></div>
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Calendar className="text-[#e89ecb] h-5 w-5 flex-shrink-0" />
-                  <p className="text-[#0B2463] font-medium">9 April 2025</p>
+            ) : (
+              <div
+                className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm"
+                id="resepsi-details"
+              >
+                <div className="text-center mb-4">
+                  <Badge className="bg-[#0B2463] hover:bg-[#0B2463]/90 mb-2">
+                    {t.resepsi}
+                  </Badge>
+                  <h3 className="text-xl font-bold text-[#0B2463]">
+                    Hotel Dalton Makassar
+                  </h3>
+                  <p className="text-[#0B2463]">Ballroom Anging Mammiri 2</p>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Clock className="text-[#e89ecb] h-5 w-5 flex-shrink-0" />
-                  <p className="text-[#0B2463] font-medium">10:00 WITA</p>
-                </div>
+                <div className="elegant-divider my-3"></div>
 
-                <div className="flex items-start gap-2">
-                  <MapPin className="text-[#e89ecb] h-5 w-5 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-[#0B2463] font-medium">
-                      Kediaman Mempelai Wanita
-                    </p>
-                    <p className="text-[#0B2463]/70 text-sm">
-                      Aroppoe, Kab. Barru
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="text-[#0B2463] h-5 w-5 flex-shrink-0" />
+                    <p className="text-[#0B2463] font-medium">12 April 2025</p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Clock className="text-[#0B2463] h-5 w-5 flex-shrink-0" />
+                    <p className="text-[#0B2463] font-medium">19:00 WITA</p>
+                  </div>
+
+                  <div className="flex items-start gap-2">
+                    <MapPin className="text-[#0B2463] h-5 w-5 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-[#0B2463] font-medium">
+                        Hotel Dalton Makassar
+                      </p>
+                      <p className="text-[#0B2463]/70 text-sm">
+                        Jl. Perintis Kemerdekaan KM.16, Makassar
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Google Maps iframe */}
+                  <div className="w-full h-[200px] mt-2 border border-[#0B2463]/10 rounded-md overflow-hidden">
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1922.5089075471017!2d119.51469192043282!3d-5.090484394700584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbefc81ff8663e1%3A0x4d7bf55efe12414a!2sDalton%20Makassar!5e0!3m2!1sen!2sid!4v1743302434257!5m2!1sen!2sid"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen={false}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    ></iframe>
+                  </div>
+
+                  {/* Souvenir information - merged from Important Information section */}
+                  <div className="mt-4 p-4 bg-[#0B2463]/5 rounded-md border border-[#0B2463]/10">
+                    <p className="text-[#0B2463] text-sm font-medium">
+                      Please show this digital letter to retrieve our wedding
+                      souvenir at the venue.
                     </p>
                   </div>
                 </div>
-
-                {/* Google Maps iframe */}
-                <div className="w-full h-[200px] mt-2 border border-[#0B2463]/10 rounded-md overflow-hidden">
-                  <iframe
-                    src="https://www.google.com/maps?q=-4.483733,119.616693&hl=en&z=18&output=embed"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen={false}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
-                </div>
               </div>
-            </div>
-
-            {/* Resepsi - Now with blue color */}
-            <div
-              className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm"
-              id="resepsi-details"
-            >
-              <div className="text-center mb-4">
-                <Badge className="bg-[#0B2463] hover:bg-[#0B2463]/90 mb-2">
-                  {t.resepsi}
-                </Badge>
-                <h3 className="text-xl font-bold text-[#0B2463]">
-                  Hotel Dalton Makassar
-                </h3>
-                <p className="text-[#0B2463]">Ballroom Anging Mammiri 2</p>
-              </div>
-
-              <div className="elegant-divider my-3"></div>
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Calendar className="text-[#0B2463] h-5 w-5 flex-shrink-0" />
-                  <p className="text-[#0B2463] font-medium">12 April 2025</p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Clock className="text-[#0B2463] h-5 w-5 flex-shrink-0" />
-                  <p className="text-[#0B2463] font-medium">19:00 WITA</p>
-                </div>
-
-                <div className="flex items-start gap-2">
-                  <MapPin className="text-[#0B2463] h-5 w-5 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-[#0B2463] font-medium">
-                      Hotel Dalton Makassar
-                    </p>
-                    <p className="text-[#0B2463]/70 text-sm">
-                      Jl. Perintis Kemerdekaan KM.16, Makassar
-                    </p>
-                  </div>
-                </div>
-
-                {/* Google Maps iframe */}
-                <div className="w-full h-[200px] mt-2 border border-[#0B2463]/10 rounded-md overflow-hidden">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1922.5089075471017!2d119.51469192043282!3d-5.090484394700584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbefc81ff8663e1%3A0x4d7bf55efe12414a!2sDalton%20Makassar!5e0!3m2!1sen!2sid!4v1743302434257!5m2!1sen!2sid"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen={false}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
-                </div>
-
-                {/* Souvenir information - merged from Important Information section */}
-                <div className="mt-4 p-4 bg-[#0B2463]/5 rounded-md border border-[#0B2463]/10">
-                  <p className="text-[#0B2463] text-sm font-medium">
-                    Please show this digital letter to retrieve our wedding
-                    souvenir at the venue.
-                  </p>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </section>
 
@@ -923,32 +955,36 @@ export default function WeddingInvitation({
           </p>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
-            <div className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm text-center">
-              <Gift className="mx-auto h-10 w-10 text-[#0B2463] mb-4" />
-              <h3 className="text-lg font-bold text-[#0B2463] mb-2">
-                Muhammad Kautsar Apriadi
-              </h3>
-              <p className="text-[#0B2463] font-mono">102471220239</p>
-              <p className="text-sm text-[#0B2463]/70 mt-1">Bank Jago</p>
-            </div>
+            {isAkad ? (
+              <>
+                <div className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm text-center">
+                  <Gift className="mx-auto h-10 w-10 text-[#e89ecb] mb-4" />
+                  <h3 className="text-lg font-bold text-[#0B2463] mb-2">
+                    Alifah Awina K
+                  </h3>
+                  <p className="text-[#0B2463] font-mono">4883 0102 0669 537</p>
+                  <p className="text-sm text-[#0B2463]/70 mt-1">Bank BRI</p>
+                </div>
 
-            <div className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm text-center">
-              <Gift className="mx-auto h-10 w-10 text-[#e89ecb] mb-4" />
-              <h3 className="text-lg font-bold text-[#0B2463] mb-2">
-                Alifah Awina K
-              </h3>
-              <p className="text-[#0B2463] font-mono">4883 0102 0669 537</p>
-              <p className="text-sm text-[#0B2463]/70 mt-1">Bank BRI</p>
-            </div>
-
-            <div className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm text-center">
-              <Gift className="mx-auto h-10 w-10 text-[#e89ecb] mb-4" />
-              <h3 className="text-lg font-bold text-[#0B2463] mb-2">
-                アリファー　アウィナ
-              </h3>
-              <p className="text-[#0B2463] font-mono">03233322</p>
-              <p className="text-sm text-[#0B2463]/70 mt-1">Resona Bank</p>
-            </div>
+                <div className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm text-center">
+                  <Gift className="mx-auto h-10 w-10 text-[#e89ecb] mb-4" />
+                  <h3 className="text-lg font-bold text-[#0B2463] mb-2">
+                    アリファー　アウィナ
+                  </h3>
+                  <p className="text-[#0B2463] font-mono">03233322</p>
+                  <p className="text-sm text-[#0B2463]/70 mt-1">Resona Bank</p>
+                </div>
+              </>
+            ) : (
+              <div className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm text-center">
+                <Gift className="mx-auto h-10 w-10 text-[#0B2463] mb-4" />
+                <h3 className="text-lg font-bold text-[#0B2463] mb-2">
+                  Muhammad Kautsar Apriadi
+                </h3>
+                <p className="text-[#0B2463] font-mono">102471220239</p>
+                <p className="text-sm text-[#0B2463]/70 mt-1">Bank Jago</p>
+              </div>
+            )}
           </div>
         </section>
 
