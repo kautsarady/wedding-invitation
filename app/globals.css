@@ -1,0 +1,657 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221 65% 22%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221 65% 22%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Add text shadow utilities */
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.text-shadow-sm {
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Add shine animation for badges */
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shine {
+  animation: shine 3s infinite linear;
+}
+
+/* Elegant card styling */
+.elegant-card {
+  position: relative;
+  box-shadow: 0 10px 30px rgba(11, 36, 99, 0.05);
+  overflow: hidden;
+  border: 1px solid rgba(11, 36, 99, 0.08);
+  border-radius: 0.25rem;
+}
+
+/* Animated border for elegant cards */
+.elegant-card-animated {
+  position: relative;
+  box-shadow: 0 10px 30px rgba(11, 36, 99, 0.05);
+  overflow: hidden;
+  border-radius: 0.25rem;
+}
+
+.elegant-card-animated::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 0.25rem;
+  padding: 2px; /* Increased from 1px */
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(11, 36, 99, 0.4) /* Increased opacity from 0.2 */,
+    rgba(232, 158, 203, 0.4) /* Increased opacity from 0.2 */,
+    rgba(11, 36, 99, 0.4) /* Increased opacity from 0.2 */,
+    transparent
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: rotate-border 4s linear infinite; /* Faster animation (8s to 4s) */
+}
+
+@keyframes rotate-border {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 400% 0%;
+  }
+}
+
+.elegant-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(11, 36, 99, 0.2), transparent);
+}
+
+/* Elegant image styling */
+.elegant-image {
+  position: relative;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(11, 36, 99, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Elegant divider */
+.elegant-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(11, 36, 99, 0.15), transparent);
+  margin: 1rem 0;
+}
+
+/* Background pattern */
+.bg-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%230b2463' stroke-width='0.5' stroke-opacity='0.1'%3E%3Cpath d='M0 0 L100 100 M100 0 L0 100 M25 0 L100 75 M0 25 L75 100 M0 75 L25 100 M75 0 L100 25'/%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.7;
+}
+
+/* Ornamental elements */
+.ornament-top {
+  position: relative;
+  width: 150px;
+  height: 30px;
+  background-image: url("data:image/svg+xml,%3Csvg width='150' height='30' viewBox='0 0 150 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M75 0C50 0 25 15 0 15v15h150V15c-25 0-50-15-75-15z' fill='%230b2463' fill-opacity='0.1'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.ornament-bottom {
+  position: relative;
+  width: 150px;
+  height: 30px;
+  background-image: url("data:image/svg+xml,%3Csvg width='150' height='30' viewBox='0 0 150 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M75 30c25 0 50-15 75-15V0H0v15c25 0 50 15 75 15z' fill='%230b2463' fill-opacity='0.1'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Falling elements animation */
+.falling-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Update the falling elements to be more apparent and fall more slowly */
+.element {
+  position: absolute;
+  animation: fall linear infinite;
+  opacity: 0.6; /* Increased from 0.4 */
+}
+
+/* Update the snowflake SVG to be hexagonal instead of cross-shaped */
+/* Snowflake */
+.element-1 {
+  width: 16px; /* Increased from 12px */
+  height: 16px; /* Increased from 12px */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230b2463' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2L12 22M7.5 4L16.5 20M4 7.5L20 16.5M4 16.5L20 7.5M7.5 20L16.5 4M2 12L22 12'/%3E%3C/svg%3E");
+  left: 10%;
+  animation-duration: 25s; /* Slowed down from 15s */
+  animation-delay: -2s;
+}
+
+/* Sakura petal */
+.element-2 {
+  width: 20px; /* Increased from 15px */
+  height: 20px; /* Increased from 15px */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z' fill='%23e89ecb' fill-opacity='0.7'/%3E%3Cpath d='M12 6c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm0 10c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z' fill='%23e89ecb' fill-opacity='0.7'/%3E%3C/svg%3E");
+  left: 30%;
+  animation-duration: 28s; /* Slowed down from 18s */
+  animation-delay: -4s;
+}
+
+/* Silver flake */
+.element-3 {
+  width: 14px; /* Increased from 10px */
+  height: 14px; /* Increased from 10px */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='silver' fill-opacity='0.5'/%3E%3C/svg%3E");
+  left: 50%;
+  animation-duration: 22s; /* Slowed down from 13s */
+  animation-delay: -6s;
+}
+
+/* Small sakura */
+.element-4 {
+  width: 12px; /* Increased from 8px */
+  height: 12px; /* Increased from 8px */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z' fill='%23e89ecb' fill-opacity='0.6'/%3E%3C/svg%3E");
+  left: 70%;
+  animation-duration: 26s; /* Slowed down from 16s */
+  animation-delay: -8s;
+}
+
+/* Small snowflake */
+.element-5 {
+  width: 14px; /* Increased from 10px */
+  height: 14px; /* Increased from 10px */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='silver' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2L12 22M7.5 4L16.5 20M4 7.5L20 16.5M4 16.5L20 7.5M7.5 20L16.5 4M2 12L22 12'/%3E%3C/svg%3E");
+  left: 90%;
+  animation-duration: 24s; /* Slowed down from 14s */
+  animation-delay: -10s;
+}
+
+/* Add more elements with different positions and delays - slowed down all animations */
+.element:nth-child(6) {
+  left: 15%;
+  animation-duration: 27s;
+  animation-delay: -1s;
+}
+.element:nth-child(7) {
+  left: 25%;
+  animation-duration: 29s;
+  animation-delay: -3s;
+}
+.element:nth-child(8) {
+  left: 35%;
+  animation-duration: 24s;
+  animation-delay: -5s;
+}
+.element:nth-child(9) {
+  left: 45%;
+  animation-duration: 26s;
+  animation-delay: -7s;
+}
+.element:nth-child(10) {
+  left: 55%;
+  animation-duration: 25s;
+  animation-delay: -9s;
+}
+.element:nth-child(11) {
+  left: 65%;
+  animation-duration: 28s;
+  animation-delay: -11s;
+}
+.element:nth-child(12) {
+  left: 75%;
+  animation-duration: 23s;
+  animation-delay: -13s;
+}
+.element:nth-child(13) {
+  left: 85%;
+  animation-duration: 27s;
+  animation-delay: -15s;
+}
+.element:nth-child(14) {
+  left: 95%;
+  animation-duration: 24s;
+  animation-delay: -17s;
+}
+.element:nth-child(15) {
+  left: 5%;
+  animation-duration: 26s;
+  animation-delay: -19s;
+}
+.element:nth-child(16) {
+  left: 20%;
+  animation-duration: 25s;
+  animation-delay: -21s;
+}
+.element:nth-child(17) {
+  left: 40%;
+  animation-duration: 27s;
+  animation-delay: -23s;
+}
+.element:nth-child(18) {
+  left: 60%;
+  animation-duration: 29s;
+  animation-delay: -25s;
+}
+.element:nth-child(19) {
+  left: 80%;
+  animation-duration: 24s;
+  animation-delay: -27s;
+}
+.element:nth-child(20) {
+  left: 33%;
+  animation-duration: 26s;
+  animation-delay: -29s;
+}
+.element:nth-child(21) {
+  left: 66%;
+  animation-duration: 28s;
+  animation-delay: -31s;
+}
+.element:nth-child(22) {
+  left: 77%;
+  animation-duration: 25s;
+  animation-delay: -33s;
+}
+.element:nth-child(23) {
+  left: 88%;
+  animation-duration: 27s;
+  animation-delay: -35s;
+}
+.element:nth-child(24) {
+  left: 22%;
+  animation-duration: 29s;
+  animation-delay: -37s;
+}
+.element:nth-child(25) {
+  left: 44%;
+  animation-duration: 24s;
+  animation-delay: -39s;
+}
+.element:nth-child(26) {
+  left: 55%;
+  animation-duration: 26s;
+  animation-delay: -41s;
+}
+.element:nth-child(27) {
+  left: 11%;
+  animation-duration: 28s;
+  animation-delay: -43s;
+}
+.element:nth-child(28) {
+  left: 99%;
+  animation-duration: 25s;
+  animation-delay: -45s;
+}
+.element:nth-child(29) {
+  left: 77%;
+  animation-duration: 27s;
+  animation-delay: -47s;
+}
+.element:nth-child(30) {
+  left: 33%;
+  animation-duration: 29s;
+  animation-delay: -49s;
+}
+
+/* Add more falling elements */
+.element:nth-child(31) {
+  left: 18%;
+  animation-duration: 26s;
+  animation-delay: -51s;
+}
+.element:nth-child(32) {
+  left: 38%;
+  animation-duration: 28s;
+  animation-delay: -53s;
+}
+.element:nth-child(33) {
+  left: 58%;
+  animation-duration: 25s;
+  animation-delay: -55s;
+}
+.element:nth-child(34) {
+  left: 78%;
+  animation-duration: 27s;
+  animation-delay: -57s;
+}
+.element:nth-child(35) {
+  left: 8%;
+  animation-duration: 29s;
+  animation-delay: -59s;
+}
+.element:nth-child(36) {
+  left: 28%;
+  animation-duration: 24s;
+  animation-delay: -61s;
+}
+.element:nth-child(37) {
+  left: 48%;
+  animation-duration: 26s;
+  animation-delay: -63s;
+}
+.element:nth-child(38) {
+  left: 68%;
+  animation-duration: 28s;
+  animation-delay: -65s;
+}
+.element:nth-child(39) {
+  left: 88%;
+  animation-duration: 25s;
+  animation-delay: -67s;
+}
+.element:nth-child(40) {
+  left: 13%;
+  animation-duration: 27s;
+  animation-delay: -69s;
+}
+
+/* Update the 3n elements to also use hexagonal snowflake */
+.element:nth-child(even) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z' fill='silver' fill-opacity='0.5'/%3E%3C/svg%3E");
+}
+.element:nth-child(3n) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e89ecb' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2L12 22M7.5 4L16.5 20M4 7.5L20 16.5M4 16.5L20 7.5M7.5 20L16.5 4M2 12L22 12'/%3E%3C/svg%3E");
+}
+.element:nth-child(5n) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%230b2463' fill-opacity='0.3'/%3E%3C/svg%3E");
+}
+
+@keyframes fall {
+  0% {
+    top: -10%;
+    transform: translateX(0) rotate(0deg);
+  }
+  100% {
+    top: 100%;
+    transform: translateX(20px) rotate(360deg);
+  }
+}
+
+.font-parisienne {
+  font-family: "Parisienne", cursive;
+  font-weight: 700;
+}
+
+.font-plus-jakarta {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.font-kiwi-maru {
+  font-family: "Kiwi Maru", serif;
+}
+
+.font-rubik-arabic {
+  font-family: "Rubik", sans-serif;
+}
+
+.rtl {
+  direction: rtl;
+}
+
+/* Add a gold accent pattern */
+.gold-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23d4af37' stroke-width='0.5' stroke-opacity='0.1'%3E%3Cpath d='M0 20 L40 20 M20 0 L20 40'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Elegant photo frame */
+.elegant-photo-frame {
+  position: relative;
+  padding: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(192, 227, 245, 0.4) 50%,
+    rgba(255, 255, 255, 0.8) 100%
+  );
+  box-shadow: 0 10px 30px rgba(11, 36, 99, 0.1), 0 0 0 1px rgba(11, 36, 99, 0.05) inset;
+}
+
+.elegant-photo-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+      45deg,
+      transparent 40%,
+      rgba(232, 158, 203, 0.1) 45%,
+      rgba(11, 36, 99, 0.1) 55%,
+      transparent 60%
+    ),
+    linear-gradient(135deg, transparent 40%, rgba(11, 36, 99, 0.1) 45%, rgba(232, 158, 203, 0.1) 55%, transparent 60%);
+  z-index: -1;
+}
+
+.elegant-photo-frame::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(11, 36, 99, 0.1);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.elegant-photo-inner {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(11, 36, 99, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Elegant hero background */
+.elegant-hero-bg {
+  background: linear-gradient(to bottom, rgba(192, 227, 245, 0.5), rgba(255, 255, 255, 0.9));
+  position: relative;
+}
+
+.elegant-hero-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%230b2463' stroke-width='0.5' stroke-opacity='0.1'%3E%3Cpath d='M30 5 L30 55 M5 30 L55 30 M15 15 L45 45 M15 45 L45 15'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.3;
+}
+
+/* Decorative corner elements */
+.corner-decoration {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  pointer-events: none;
+}
+
+.corner-decoration.top-left {
+  top: 0;
+  left: 0;
+  border-top: 2px solid rgba(11, 36, 99, 0.2);
+  border-left: 2px solid rgba(11, 36, 99, 0.2);
+}
+
+.corner-decoration.top-right {
+  top: 0;
+  right: 0;
+  border-top: 2px solid rgba(11, 36, 99, 0.2);
+  border-right: 2px solid rgba(11, 36, 99, 0.2);
+}
+
+.corner-decoration.bottom-left {
+  bottom: 0;
+  left: 0;
+  border-bottom: 2px solid rgba(11, 36, 99, 0.2);
+  border-left: 2px solid rgba(11, 36, 99, 0.2);
+}
+
+.corner-decoration.bottom-right {
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid rgba(11, 36, 99, 0.2);
+  border-right: 2px solid rgba(11, 36, 99, 0.2);
+}
+
+/* Enhanced hide scrollbar but allow scrolling - more comprehensive */
+.hide-scrollbar {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+  overflow-y: scroll !important;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari and Opera */
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* Infinite scroll container */
+.infinite-scroll-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.infinite-scroll-content {
+  position: relative;
+  transition: transform 0.5s ease;
+}
+
+/* Add these styles at the end of the file for the envelope animation */
+
+@keyframes open-envelope {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(1.05);
+  }
+  60% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+.animate-open-envelope {
+  animation: open-envelope 1s ease-in-out forwards;
+}
+
+/* Add subtle paper texture to the envelope */
+.envelope {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.02'%3E%3Cpath d='M0 0h100v100H0z'/%3E%3C/g%3E%3C/svg%3E");
+  background-color: white;
+  position: relative;
+}
+
+/* Add envelope flap shadow */
+.envelope-top::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), transparent);
+}
+
+/* Add envelope bottom shadow */
+.envelope-bottom::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.1), transparent);
+}
+
