@@ -151,13 +151,13 @@ export default function WeddingInvitation({
   // Handle mute/unmute
   useEffect(() => {
     if (sound) {
-      if (isMuted === false) {
+      if (isMuted === true) {
         sound.pause();
-      } else if (isMuted === true) {
+      } else if (isMuted === false) {
         sound.play();
       }
     }
-  }, [isMuted, sound]);
+  }, [isMuted]);
 
   // Initialize wishes container with duplicated content for seamless scrolling
   useEffect(() => {
@@ -338,10 +338,10 @@ export default function WeddingInvitation({
               {/* Envelope Content */}
               <div className="p-8 text-center">
                 <div className="mb-6">
-                  <div className="w-32 h-32 overflow-hidden mx-auto mb-4 border-[3px] border-[#0B2463]/20 p-1 bg-white shadow-md">
+                  <div className="w-32 h-40 overflow-hidden mx-auto mb-4 border-[3px] border-[#0B2463]/20 p-1 bg-white shadow-md">
                     <Image
                       src={
-                        IMAGES.couple || "/placeholder.svg?height=400&width=400"
+                        IMAGES.coupleFormal1 || "/placeholder.svg?height=400&width=400"
                       }
                       alt="Couple"
                       width={100}
@@ -482,16 +482,16 @@ export default function WeddingInvitation({
             </h2>
 
             {/* Couple Image with Elegant Frame */}
-            <div className="relative w-72 h-72 mx-auto mb-8">
+            <div className="relative w-72 h-88 mx-auto mb-8">
               <div className="elegant-photo-frame w-full h-full">
                 <div className="elegant-photo-inner w-full h-full">
                   <Image
                     src={
-                      IMAGES.couple || "/placeholder.svg?height=400&width=400"
+                      IMAGES.coupleTrad2 || "/placeholder.svg?height=400&width=400"
                     }
                     alt="Couple"
-                    width={300}
-                    height={300}
+                    width={255}
+                    height={375}
                     className="object-cover w-full h-full"
                   />
                 </div>
@@ -632,7 +632,7 @@ export default function WeddingInvitation({
               <div className="text-center">
                 <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 border-[3px] border-[#0B2463]/20 p-1 bg-white shadow-md">
                   <Image
-                    src={IMAGES.groom || "/placeholder.svg"}
+                    src={IMAGES.groomTrad1 || "/placeholder.svg"}
                     alt="Groom"
                     width={128}
                     height={128}
@@ -655,7 +655,7 @@ export default function WeddingInvitation({
               <div className="text-center">
                 <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 border-[3px] border-[#e89ecb]/20 p-1 bg-white shadow-md">
                   <Image
-                    src={IMAGES.bride || "/placeholder.svg"}
+                    src={IMAGES.brideTrad1 || "/placeholder.svg"}
                     alt="Bride"
                     width={128}
                     height={128}
@@ -822,8 +822,10 @@ export default function WeddingInvitation({
                     <Image
                       src={image || "/placeholder.svg"}
                       alt={`Gallery image ${index + 1}`}
+                      quality={75}
                       width={300}
                       height={300}
+                      placeholder="blur"
                       className="object-cover w-full h-full"
                     />
                   </div>
@@ -840,6 +842,7 @@ export default function WeddingInvitation({
                                 alt={`Gallery image ${i + 1}`}
                                 width={800}
                                 height={600}
+                                placeholder="blur"
                                 className="object-contain w-full h-full"
                               />
                             </div>
