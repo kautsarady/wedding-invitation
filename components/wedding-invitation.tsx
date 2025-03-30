@@ -2,24 +2,9 @@
 
 import type React from "react";
 
-import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import {
-  Volume2,
-  VolumeX,
-  MapPin,
-  Gift,
-  Calendar,
-  Clock,
-  Languages,
-} from "lucide-react";
-import { Howl } from "howler";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -27,16 +12,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { Textarea } from "@/components/ui/textarea";
 import { IMAGES } from "@/constants/images";
 import { TRANSLATIONS } from "@/constants/translations";
+import { cn } from "@/lib/utils";
+import { Howl } from "howler";
+import {
+  Calendar,
+  Clock,
+  Gift,
+  Languages,
+  MapPin,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import Gallery from "./gallery";
 
 type Language = "id" | "jp" | "en";
 type CountryCode = "id" | "jp" | "sg" | "other";
@@ -59,7 +52,7 @@ export default function WeddingInvitation({
 }: {
   guestName: string;
 }) {
-  const [language, setLanguage] = useState<Language>("en");
+  const [language, setLanguage] = useState<Language>("id");
   const [isMuted, setIsMuted] = useState<boolean | undefined>(undefined);
   const [isOpen, setIsOpen] = useState(false);
   const [sound, setSound] = useState<Howl | null>(null);
@@ -123,7 +116,6 @@ export default function WeddingInvitation({
   const wishesRef = useRef<HTMLDivElement>(null);
   const wishesContainerRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
-  const [isScrolling, setIsScrolling] = useState(false);
 
   const getCountryByCode = (code: CountryCode) => {
     return COUNTRIES.find((country) => country.code === code) || COUNTRIES[0];
@@ -159,22 +151,6 @@ export default function WeddingInvitation({
     }
   }, [isMuted]);
 
-  // Initialize wishes container with duplicated content for seamless scrolling
-  useEffect(() => {
-    if (wishesRef.current && !isScrolling) {
-      // Create a duplicate set of wishes for seamless scrolling
-      const wishElements = wishesRef.current.querySelectorAll(":scope > div");
-      if (wishElements.length > 0) {
-        // Clone all elements and append them
-        wishElements.forEach((element) => {
-          const clone = element.cloneNode(true);
-          wishesRef.current?.appendChild(clone);
-        });
-        setIsScrolling(true);
-      }
-    }
-  }, [isScrolling]);
-
   useEffect(() => {
     // Set guest name from query params if available
     const name = searchParams.get("to");
@@ -187,44 +163,24 @@ export default function WeddingInvitation({
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       if (timezone.includes("Asia/Tokyo")) {
         setFormData((prev) => ({ ...prev, location: "jp" }));
+        setLanguage("jp");
       } else if (timezone.includes("Asia/Singapore")) {
         setFormData((prev) => ({ ...prev, location: "sg" }));
-      } else if (timezone.includes("Asia/Jakarta")) {
+        setLanguage("en");
+      } else if (
+        timezone.includes("Asia/Jakarta") ||
+        timezone.includes("Asia/Makassar") ||
+        timezone.includes("Asia/Jayapura")
+      ) {
         setFormData((prev) => ({ ...prev, location: "id" }));
+        setLanguage("id");
+      } else {
+        setLanguage("en");
       }
     } catch (error) {
       console.error("Error detecting location:", error);
     }
-
-    // Smooth infinite scroll implementation
-    let scrollInterval: NodeJS.Timeout;
-
-    if (wishesRef.current && isScrolling) {
-      // Start with a very slow scroll speed
-      const scrollSpeed = 0.5; // pixels per frame
-
-      scrollInterval = setInterval(() => {
-        if (wishesRef.current) {
-          // Increment scroll position by a small amount
-          wishesRef.current.scrollTop += scrollSpeed;
-
-          // When we reach the halfway point (original content height)
-          // Reset to the top very subtly to create a seamless loop
-          const totalHeight = wishesRef.current.scrollHeight;
-          const halfHeight = totalHeight / 2;
-
-          if (wishesRef.current.scrollTop >= halfHeight) {
-            // Reset to top without animation (will be imperceptible)
-            wishesRef.current.scrollTop = 0;
-          }
-        }
-      }, 16); // ~60fps
-    }
-
-    return () => {
-      if (scrollInterval) clearInterval(scrollInterval);
-    };
-  }, [searchParams, isScrolling]);
+  }, [searchParams]);
 
   const handleSubmitWish = (e: React.FormEvent) => {
     e.preventDefault();
@@ -341,7 +297,8 @@ export default function WeddingInvitation({
                   <div className="w-32 h-40 overflow-hidden mx-auto mb-4 border-[3px] border-[#0B2463]/20 p-1 bg-white shadow-md">
                     <Image
                       src={
-                        IMAGES.coupleFormal1 || "/placeholder.svg?height=400&width=400"
+                        IMAGES.coupleFormal1 ||
+                        "/placeholder.svg?height=400&width=400"
                       }
                       alt="Couple"
                       width={100}
@@ -487,7 +444,8 @@ export default function WeddingInvitation({
                 <div className="elegant-photo-inner w-full h-full">
                   <Image
                     src={
-                      IMAGES.coupleTrad2 || "/placeholder.svg?height=400&width=400"
+                      IMAGES.coupleTrad2 ||
+                      "/placeholder.svg?height=400&width=400"
                     }
                     alt="Couple"
                     width={255}
@@ -800,65 +758,6 @@ export default function WeddingInvitation({
           </div>
         </section>
 
-        {/* Gallery */}
-        <section className="py-12">
-          <h2 className="font-parisienne text-3xl md:text-4xl text-[#0B2463] text-center mb-10 font-bold text-shadow-sm">
-            {t.gallery}
-          </h2>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {IMAGES.gallery.map((image, index) => (
-              <Dialog key={index}>
-                <DialogTrigger asChild>
-                  <div
-                    className={`overflow-hidden elegant-image cursor-pointer hover:opacity-90 transition-opacity ${
-                      index % 3 === 0
-                        ? "row-span-2 aspect-[3/4]"
-                        : index % 5 === 0
-                        ? "col-span-2 aspect-[16/9]"
-                        : "aspect-square"
-                    }`}
-                  >
-                    <Image
-                      src={image || "/placeholder.svg"}
-                      alt={`Gallery image ${index + 1}`}
-                      quality={75}
-                      width={300}
-                      height={300}
-                      placeholder="blur"
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl p-0 bg-transparent border-none">
-                  <Carousel className="w-full">
-                    <CarouselContent>
-                      {IMAGES.gallery.map((img, i) => (
-                        <CarouselItem key={i}>
-                          <div className="p-1">
-                            <div className="overflow-hidden elegant-image">
-                              <Image
-                                src={img || "/placeholder.svg"}
-                                alt={`Gallery image ${i + 1}`}
-                                width={800}
-                                height={600}
-                                placeholder="blur"
-                                className="object-contain w-full h-full"
-                              />
-                            </div>
-                          </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                  </Carousel>
-                </DialogContent>
-              </Dialog>
-            ))}
-          </div>
-        </section>
-
         {/* Wishes Section */}
         <section className="py-12">
           <h2 className="font-parisienne text-3xl md:text-4xl text-[#0B2463] text-center mb-10 font-bold text-shadow-sm">
@@ -1029,20 +928,32 @@ export default function WeddingInvitation({
               <h3 className="text-lg font-bold text-[#0B2463] mb-2">
                 Muhammad Kautsar Apriadi
               </h3>
-              <p className="text-[#0B2463] font-mono">1234 5678 9012 3456</p>
-              <p className="text-sm text-[#0B2463]/70 mt-1">Bank Mandiri</p>
+              <p className="text-[#0B2463] font-mono">102471220239</p>
+              <p className="text-sm text-[#0B2463]/70 mt-1">Bank Jago</p>
             </div>
 
             <div className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm text-center">
               <Gift className="mx-auto h-10 w-10 text-[#e89ecb] mb-4" />
               <h3 className="text-lg font-bold text-[#0B2463] mb-2">
-                Alifah Awina K.
+                Alifah Awina K
               </h3>
-              <p className="text-[#0B2463] font-mono">9876 5432 1098 7654</p>
-              <p className="text-sm text-[#0B2463]/70 mt-1">Bank BNI</p>
+              <p className="text-[#0B2463] font-mono">4883 0102 0669 537</p>
+              <p className="text-sm text-[#0B2463]/70 mt-1">Bank BRI</p>
+            </div>
+
+            <div className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm text-center">
+              <Gift className="mx-auto h-10 w-10 text-[#e89ecb] mb-4" />
+              <h3 className="text-lg font-bold text-[#0B2463] mb-2">
+                アリファー　アウィナ
+              </h3>
+              <p className="text-[#0B2463] font-mono">03233322</p>
+              <p className="text-sm text-[#0B2463]/70 mt-1">Resona Bank</p>
             </div>
           </div>
         </section>
+
+        {/* Gallery */}
+        <Gallery t={t} />
 
         {/* Footer */}
         <footer className="py-8 text-center">

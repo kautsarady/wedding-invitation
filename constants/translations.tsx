@@ -1,6 +1,6 @@
 export const TRANSLATIONS = {
   id: {
-    theWeddingOf: "Pernikahan Dari",
+    theWeddingOf: "Pernikahan",
     akadNikah: "Akad Nikah",
     resepsi: "Resepsi",
     quranVerse:
