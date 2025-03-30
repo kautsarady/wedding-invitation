@@ -1,18 +1,7 @@
 "use client";
 
-import type React from "react";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { IMAGES } from "@/constants/images";
 import { TRANSLATIONS } from "@/constants/translations";
 import { cn } from "@/lib/utils";
@@ -27,9 +16,9 @@ import {
   VolumeX,
 } from "lucide-react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Gallery from "./gallery";
+import Wishes from "./wishes";
 
 type Language = "id" | "jp" | "en";
 type CountryCode = "id" | "jp" | "sg" | "other";
@@ -56,70 +45,6 @@ export default function WeddingInvitation({
   const [isMuted, setIsMuted] = useState<boolean | undefined>(undefined);
   const [isOpen, setIsOpen] = useState(false);
   const [sound, setSound] = useState<Howl | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [wishes, setWishes] = useState<
-    Array<{ name: string; message: string; location: CountryCode }>
-  >([
-    {
-      name: "Ahmad",
-      message:
-        "Congratulations on your wedding! Wishing you a lifetime of love and happiness.",
-      location: "id",
-    },
-    {
-      name: "Yuki",
-      message: "おめでとうございます！末永くお幸せに。",
-      location: "jp",
-    },
-    {
-      name: "Sarah",
-      message:
-        "May your love grow stronger with each passing day. Best wishes!",
-      location: "sg",
-    },
-    {
-      name: "Michael",
-      message:
-        "Congratulations to the beautiful couple! May your journey together be filled with joy.",
-      location: "other",
-    },
-    {
-      name: "Sophia",
-      message:
-        "Wishing you both all the love and happiness in the world. Congratulations!",
-      location: "id",
-    },
-    {
-      name: "Takashi",
-      message: "結婚おめでとう！いつまでも幸せに。",
-      location: "jp",
-    },
-    {
-      name: "Emma",
-      message:
-        "Here's to a beautiful beginning of your forever. Congratulations!",
-      location: "sg",
-    },
-    {
-      name: "David",
-      message:
-        "May the years ahead be filled with lasting joy. Congratulations on your marriage!",
-      location: "other",
-    },
-  ]);
-  const [formData, setFormData] = useState({
-    name: guestName || "",
-    message: "",
-    location: "id" as CountryCode,
-  });
-
-  const wishesRef = useRef<HTMLDivElement>(null);
-  const wishesContainerRef = useRef<HTMLDivElement>(null);
-  const searchParams = useSearchParams();
-
-  const getCountryByCode = (code: CountryCode) => {
-    return COUNTRIES.find((country) => country.code === code) || COUNTRIES[0];
-  };
 
   // Initialize Howler when the envelope is opened
   useEffect(() => {
@@ -150,78 +75,6 @@ export default function WeddingInvitation({
       }
     }
   }, [isMuted]);
-
-  useEffect(() => {
-    // Set guest name from query params if available
-    const name = searchParams.get("to");
-    if (name) {
-      setFormData((prev) => ({ ...prev, name }));
-    }
-
-    // Try to detect user's location for the form
-    try {
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      if (timezone.includes("Asia/Tokyo")) {
-        setFormData((prev) => ({ ...prev, location: "jp" }));
-        setLanguage("jp");
-      } else if (timezone.includes("Asia/Singapore")) {
-        setFormData((prev) => ({ ...prev, location: "sg" }));
-        setLanguage("en");
-      } else if (
-        timezone.includes("Asia/Jakarta") ||
-        timezone.includes("Asia/Makassar") ||
-        timezone.includes("Asia/Jayapura")
-      ) {
-        setFormData((prev) => ({ ...prev, location: "id" }));
-        setLanguage("id");
-      } else {
-        setLanguage("en");
-      }
-    } catch (error) {
-      console.error("Error detecting location:", error);
-    }
-  }, [searchParams]);
-
-  const handleSubmitWish = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.name && formData.message) {
-      const newWish = {
-        name: formData.name,
-        message: formData.message,
-        location: formData.location,
-      };
-
-      setWishes((prev) => [...prev, newWish]);
-
-      // Also add to the DOM for the infinite scroll
-      if (wishesRef.current) {
-        // Create a new wish element
-        const newWishElement = document.createElement("div");
-        newWishElement.className = "border-b pb-3 last:border-b-0";
-        newWishElement.innerHTML = `
-          <div class="flex justify-between items-center mb-1">
-            <h4 class="font-bold text-[#0B2463]">${formData.name}</h4>
-            <div class="flex items-center gap-1">
-              <span class="text-lg" aria-hidden="true">${
-                getCountryByCode(formData.location).flag
-              }</span>
-              <span class="sr-only">${
-                getCountryByCode(formData.location).name
-              }</span>
-            </div>
-          </div>
-          <p class="text-sm text-[#0B2463]/80">${formData.message}</p>
-        `;
-
-        // Add to both the original and cloned sections
-        wishesRef.current.appendChild(newWishElement);
-        const clone = newWishElement.cloneNode(true);
-        wishesRef.current.appendChild(clone);
-      }
-
-      setFormData((prev) => ({ ...prev, message: "" }));
-    }
-  };
 
   const t = TRANSLATIONS[language];
 
@@ -339,12 +192,12 @@ export default function WeddingInvitation({
           <div className="envelope-container relative">
             <div className="envelope bg-white shadow-xl rounded-lg overflow-hidden transform transition-all duration-500 hover:scale-105">
               {/* Envelope Top */}
-              <div className="envelope-top bg-gradient-to-r from-[#0B2463]/80 to-[#0B2463] h-24 flex items-center justify-center relative">
+              <div className="envelope-top bg-gradient-to-r from-[#0B2463]/80 to-[#0B2463] h-32 flex items-center justify-center relative">
                 <div className="text-center">
-                  <p className="text-white/90 text-sm">
+                  <p className="text-white/90 text-sm my-1">
                     {t.invitationLetterFor}
                   </p>
-                  <h1 className="font-parisienne text-3xl text-white mb-1 font-extrabold text-shadow">
+                  <h1 className="text-3xl text-white mb-1 font-extrabold text-shadow">
                     {guestName}
                   </h1>
                 </div>
@@ -584,35 +437,36 @@ export default function WeddingInvitation({
             {/* Event Badges */}
             <div className="flex flex-wrap justify-center gap-3 mt-8">
               {isAkad ? (
-              <Badge
-                variant="outline"
-                className="py-2 px-4 text-base border-[#e89ecb] text-[#e89ecb] cursor-pointer hover:bg-[#e89ecb] hover:text-white transition-colors relative overflow-hidden group"
-                onClick={() =>
-                  document
-                    .getElementById("akad-details")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                <span className="relative z-10 flex items-center">
-                  <Calendar className="mr-1 h-4 w-4" /> {t.akadNikah} 09.04.2025
-                </span>
-                <span className="absolute inset-0 bg-gradient-to-r from-[#e89ecb]/0 via-[#e89ecb]/20 to-[#e89ecb]/0 opacity-0 group-hover:opacity-100 animate-shine"></span>
-              </Badge>
+                <Badge
+                  variant="outline"
+                  className="py-2 px-4 text-base border-[#e89ecb] text-[#e89ecb] cursor-pointer hover:bg-[#e89ecb] hover:text-white transition-colors relative overflow-hidden group"
+                  onClick={() =>
+                    document
+                      .getElementById("akad-details")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  <span className="relative z-10 flex items-center">
+                    <Calendar className="mr-1 h-4 w-4" /> {t.akadNikah}{" "}
+                    09.04.2025
+                  </span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-[#e89ecb]/0 via-[#e89ecb]/20 to-[#e89ecb]/0 opacity-0 group-hover:opacity-100 animate-shine"></span>
+                </Badge>
               ) : (
-              <Badge
-                variant="outline"
-                className="py-2 px-4 text-base border-[#0B2463] text-[#0B2463] cursor-pointer hover:bg-[#0B2463] hover:text-white transition-colors relative overflow-hidden group"
-                onClick={() =>
-                  document
-                    .getElementById("resepsi-details")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                <span className="relative z-10 flex items-center">
-                  <Calendar className="mr-1 h-4 w-4" /> {t.resepsi} 12.04.2025
-                </span>
-                <span className="absolute inset-0 bg-gradient-to-r from-[#0B2463]/0 via-[#0B2463]/20 to-[#0B2463]/0 opacity-0 group-hover:opacity-100 animate-shine"></span>
-              </Badge>
+                <Badge
+                  variant="outline"
+                  className="py-2 px-4 text-base border-[#0B2463] text-[#0B2463] cursor-pointer hover:bg-[#0B2463] hover:text-white transition-colors relative overflow-hidden group"
+                  onClick={() =>
+                    document
+                      .getElementById("resepsi-details")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  <span className="relative z-10 flex items-center">
+                    <Calendar className="mr-1 h-4 w-4" /> {t.resepsi} 12.04.2025
+                  </span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-[#0B2463]/0 via-[#0B2463]/20 to-[#0B2463]/0 opacity-0 group-hover:opacity-100 animate-shine"></span>
+                </Badge>
               )}
             </div>
           </div>
@@ -790,160 +644,11 @@ export default function WeddingInvitation({
           </div>
         </section>
 
-        {/* Wishes Section */}
-        <section className="py-12">
-          <h2 className="font-parisienne text-3xl md:text-4xl text-[#0B2463] text-center mb-10 font-bold text-shadow-sm">
-            {t.sendWishes}
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Wishes Display */}
-            <div className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm h-[350px] overflow-hidden">
-              <div
-                ref={wishesContainerRef}
-                className="infinite-scroll-container h-full"
-              >
-                <div
-                  ref={wishesRef}
-                  className="h-full hide-scrollbar space-y-4"
-                >
-                  {wishes.map((wish, index) => (
-                    <div key={index} className="border-b pb-3 last:border-b-0">
-                      <div className="flex justify-between items-center mb-1">
-                        <h4 className="font-bold text-[#0B2463]">
-                          {wish.name}
-                        </h4>
-                        <div className="flex items-center gap-1">
-                          <span className="text-lg" aria-hidden="true">
-                            {getCountryByCode(wish.location).flag}
-                          </span>
-                          <span className="sr-only">
-                            {getCountryByCode(wish.location).name}
-                          </span>
-                        </div>
-                      </div>
-                      <p className="text-sm text-[#0B2463]/80">
-                        {wish.message}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Wishes Form - Enhanced with flags */}
-            <div className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm">
-              <form onSubmit={handleSubmitWish} className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-[#0B2463] mb-1"
-                  >
-                    {t.name}
-                  </label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, name: e.target.value }))
-                    }
-                    placeholder={t.namePlaceholder}
-                    required
-                    className="border-[#0B2463]/30 focus-visible:ring-[#0B2463]"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="location"
-                    className="block text-sm font-medium text-[#0B2463] mb-1"
-                  >
-                    {t.sendingFrom}
-                  </label>
-                  <Select
-                    value={formData.location}
-                    onValueChange={(value) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        location: value as CountryCode,
-                      }))
-                    }
-                  >
-                    <SelectTrigger className="border-[#0B2463]/30 focus-visible:ring-[#0B2463]">
-                      <SelectValue placeholder={t.selectLocation}>
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg">
-                            {getCountryByCode(formData.location).flag}
-                          </span>
-                          <span>
-                            {getCountryByCode(formData.location).name}
-                          </span>
-                        </div>
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {COUNTRIES.map((country) => (
-                        <SelectItem
-                          key={country.code}
-                          value={country.code}
-                          className="flex items-center gap-2"
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg">{country.flag}</span>
-                            <span>{country.name}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-medium text-[#0B2463] mb-1"
-                  >
-                    {t.message}
-                  </label>
-                  <Textarea
-                    id="message"
-                    value={formData.message}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        message: e.target.value,
-                      }))
-                    }
-                    placeholder={t.messagePlaceholder}
-                    required
-                    className="min-h-[100px] border-[#0B2463]/30 focus-visible:ring-[#0B2463]"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full bg-[#0B2463] hover:bg-[#0B2463]/90"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="mr-2"
-                  >
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                  </svg>{" "}
-                  {t.sendWish}
-                </Button>
-              </form>
-            </div>
-          </div>
-        </section>
+        <Wishes
+          t={t}
+          guestName={guestName}
+          onLangChange={(lang) => setLanguage(lang)}
+        />
 
         {/* Gift Section */}
         <section className="py-12">
@@ -954,7 +659,7 @@ export default function WeddingInvitation({
             {t.giftMessage}
           </p>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+          <div className="grid gap-8 max-w-2xl mx-auto">
             {isAkad ? (
               <>
                 <div className="elegant-card-animated p-6 bg-white/90 backdrop-blur-sm text-center">
